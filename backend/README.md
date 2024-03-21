@@ -67,28 +67,166 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 8. Create a `POST` endpoint to get questions to play the quiz. This endpoint should take a category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
 9. Create error handlers for all expected errors including 400, 404, 422, and 500.
 
-## Documenting your Endpoints
+## API Documentation
 
-You will need to provide detailed documentation of your API endpoints including the URL, request parameters, and the response body. Use the example below as a reference.
+### Endpoints
 
-### Documentation Example
+**GET '/categories'**
 
-`GET '/api/v1.0/categories'`
+- Fetches a dictionary of all categories where the keys are the ids and the values are the corresponding category names.
+- **Request Parameters:** None
+- **Response Body:**
 
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, `categories`, that contains an object of `id: category_string` key: value pairs.
+  ```json
+  {
+    "success": true,
+    "categories": {
+      "1": "Science",
+      "2": "Art",
+      "3": "Geography",
+      "4": "History",
+      "5": "Entertainment",
+      "6": "Sports"
+    }
+  }
+  ```
 
-```json
-{
-  "1": "Science",
-  "2": "Art",
-  "3": "Geography",
-  "4": "History",
-  "5": "Entertainment",
-  "6": "Sports"
-}
-```
+**GET '/questions?page=<page_number>'**
+
+- Fetches a paginated set of questions, total number of questions, all categories, and current category string.
+- **Request Parameters:**
+  - `page` (optional): Integer representing the page number (defaults to 1 if not provided).
+- **Response Body:**
+
+  ```json
+  {
+    "success": true,
+    "questions": [
+      {
+        "id": 1,
+        "question": "What is the capital of France?",
+        "answer": "Paris",
+        "difficulty": 3,
+        "category": 3
+      }
+      // More questions...
+    ],
+    "total_questions": 10,
+    "categories": {
+      "1": "Science",
+      "2": "Art",
+      "3": "Geography"
+      // More categories...
+    },
+    "current_category": null
+  }
+  ```
+
+**DELETE '/questions/<question_id>'**
+
+- Deletes a specified question using its ID.
+- **Request Parameters:**
+  - `question_id`: The ID of the question to delete.
+- **Response Body:**
+
+  ```json
+  {
+    "success": true,
+    "deleted": <question_id>
+  }
+  ```
+
+**POST '/questions'**
+
+- Creates a new question in the database.
+- **Request Body:**
+
+  ```json
+  {
+    "question": "H2O is the chemical formula for what?",
+    "answer": "Water",
+    "difficulty": 1,
+    "category": "1"
+  }
+  ```
+
+- **Response Body:**
+
+  ```json
+  {
+    "success": true,
+    "created": <new_question_id>
+  }
+  ```
+
+**POST '/questions/search'**
+
+- Fetches all questions where a substring matches the search term (case-insensitive).
+- **Request Body:**
+
+  ```json
+  {
+    "searchTerm": "title"
+  }
+  ```
+
+- **Response Body:**
+
+  ```json
+  {
+    "success": true,
+    "questions": [
+      // Matching questions...
+    ],
+    "total_questions": <number_of_matching_questions>,
+    "current_category": null
+  }
+  ```
+
+**GET '/categories/<category_id>/questions'**
+
+- Fetches questions for a category specified by its ID.
+- **Request Parameters:**
+  - `category_id`: The ID of the category.
+- **Response Body:**
+
+  ```json
+  {
+    "success": true,
+    "questions": [
+      // Questions within the specified category...
+    ],
+    "total_questions": <total_number_of_questions_in_category>,
+    "current_category": <category_id>
+  }
+  ```
+
+**POST '/quizzes'**
+
+- Fetches one random question within a given category, avoiding previous questions.
+- **Request Body:**
+
+  ```json
+  {
+    "previous_questions": [1, 4, 20, 15],
+    "quiz_category": {"type": "Science", "id": "1"}
+  }
+  ```
+
+- **Response Body:**
+
+  ```json
+  {
+    "success": true,
+    "question": {
+      "id": 30,
+      "question": "What is the nearest planet to the sun?",
+      "answer": "Mercury",
+      "difficulty": 2,
+      "category": 1
+    }
+  }
+  ```
 
 ## Testing
 
